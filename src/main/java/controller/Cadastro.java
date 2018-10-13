@@ -3,6 +3,7 @@ package controller;
 import banco.BancoDeDados;
 import model.Empresa;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -37,8 +38,10 @@ public class Cadastro extends HttpServlet {
         BancoDeDados bancoDeDados = new BancoDeDados();
         bancoDeDados.adiciona(empresa);
 
-        PrintWriter writer = resp.getWriter();
-        writer.print("<html><body> Empresa " + nome + " adicionada. </body></html>");
+        //chama o jsp
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/nova-empresa.jsp");
+        req.setAttribute("nomeDaEmpresa", empresa.getNome());
+        requestDispatcher.forward(req, resp);
     }
 
     @Override
@@ -47,11 +50,10 @@ public class Cadastro extends HttpServlet {
 
         List<Empresa> empresas = bancoDeDados.getEmpresas();
 
-        PrintWriter writer = resp.getWriter();
-        writer.print("<html><body>");
-        for (Empresa empresa: empresas) {
-            writer.println("Empresa " + empresa.getNome() + ".<br>");
-        }
-        writer.print("</body></html>");
+        // "pendura o objeto"
+        req.setAttribute("listaDeEmpresas", empresas);
+
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/lista-empresa.jsp");
+        requestDispatcher.forward(req, resp);
     }
 }
